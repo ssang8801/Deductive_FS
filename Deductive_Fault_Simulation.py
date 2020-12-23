@@ -146,14 +146,32 @@ for elements in Gates:
             elements["In2Val"] = elements2["Value"]
 
 #Ready_Gates Initialize
-
-
-
+Ready_Gates = list()
 
 for elements in Gates:
-    print(elements, "\n")
+    if elements["GateType"] == "INV" or elements["GateType"] == "BUF":
+        if elements["Exec"] == 0:
+            if elements["In1Val"] != -1:
+                Ready_Gates.append(elements["Num"])
+    else:
+        if elements["In1Val"] != -1:
+            if elements["In2Val"] != -1:
+                if elements["Exec"] == 0:
+                    Ready_Gates.append(elements["Num"])
 
 
+while is Ready_Gates:
+    for elements in Ready_Gates:
+        for elements2 in Gates:
+            if elements == elements2["Num"]:
+                elements2["Exec"] = 1
+                if elements2["GateType"] == "INV" or elements2["GateType"] == BUF:
+                    elements2["Out"]
+
+
+
+
+print(Ready_Gates)
 
 
 print(Inputs)
