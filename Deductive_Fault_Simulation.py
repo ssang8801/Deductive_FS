@@ -159,19 +159,129 @@ for elements in Gates:
                 if elements["Exec"] == 0:
                     Ready_Gates.append(elements["Num"])
 
+for elements in Ready_Gates:
+    print(elements)
 
-while is Ready_Gates:
+#Ready Gate Executions
+Flagdetector = list()
+count = 0
+while Ready_Gates:
     for elements in Ready_Gates:
         for elements2 in Gates:
             if elements == elements2["Num"]:
                 elements2["Exec"] = 1
-                if elements2["GateType"] == "INV" or elements2["GateType"] == BUF:
-                    elements2["Out"]
+                if elements2["In1Val"] == '0':
+                    count = 0
+                    for elements3 in elements2["In1Faults"]:
+                        if elements2["In1Node"] == elements3["Node"]:
+                            if elements3["SA"] == 0:
+                                Flagdetector.append(count)
+                        count = count + 1
+
+                if elements2["In1Val"] == '1':
+                    count = 0
+                    for elements3 in elements2["In1Faults"]:
+                        if elements2["In1Node"] == elements3["Node"]:
+                            if elements3["SA"] == 1:
+                                Flagdetector.append(count)
+                        count = count + 1
+
+
+                for elements3 in Flagdetector:
+                    del elements2["In1Faults"][elements3]
+
+                Flagdetector.clear()
+
+                if elements2["In2Val"] == '0':
+                    count = 0
+                    for elements3 in elements2["In2Faults"]:
+                        if elements2["In2Node"] == elements3["Node"]:
+                            if elements3["SA"] == 0:
+                                Flagdetector.append(count)
+                        count = count + 1
+
+                if elements2["In2Val"] == '1':
+                    count = 0
+                    for elements3 in elements2["In2Faults"]:
+                        if elements2["In2Node"] == elements3["Node"]:
+                            if elements3["SA"] == 1:
+                                Flagdetector.append(count)
+                        count = count + 1
+
+
+                for elements3 in Flagdetector:
+                    del elements2["In2Faults"][elements3]
+
+                Flagdetector.clear()
+
+                if elements2["GateType"] == "INV":
+                    if int(elements2["In1Val"]) == 0:
+                        elements2["OutVal"] = 1
+                    if int(elements2["In1Val"]) == 1:
+                        elements2["OutVal"] = 0
+                    for elements3 in elements2["In1Faults"]:
+                        elements2["OutFaults"].append(elements3)
+
+                if elements2["GateType"] == "BUF":
+                    if int(elements2["In1Val"]) == 0:
+                        elements2["OutVal"] = 0
+                    if int(elements2["In1Val"]) == 1:
+                        elements2["OutVal"] = 1
+                    for elements3 in elements2["In1Faults"]:
+                        elements2["OutFaults"].append(elements3)
+
+                if elements2["GateType"] == "OR":
+                    if (int(elements2["In1Val"]) + int(elements2["In2Val"])) >= 1:
+                        elements2["OutVal"] = 1
+                    if int(elements["In1Val"]) == 0:
+                        if int(elements["In2Val"]) == 0:
+                            templist = list()
+                            tempcount = 0
+                            for elements3 in elements2["In1Faults"]:
+                                for elements4 in elements2["In2Faults"]:
+                                    if elements4["Node"] == elements3["Node"]:
+                                        if elements4["SA"] == elements3["SA"]:
+                                            templist.append(tempcount)
+                                    tempcount = tempcount + 1
+                            for d in templist:
+                                elements2["In2Faults"].remove(d)
+                            templist.clear()
+
+                    if int(elements["In1Val"]) == 0:
+                        if int(elements["In2Val"]) == 1:
+                            print()
+                    if int(elements["In1Val"]) == 1:
+                        if int(elements["In2Val"]) == 0:
+                            print()
+
+                    if int(elements["In1Val"]) == 1:
+                        if int(elements["In2Val"]) == 1:
+                            print()
+
+
+
+                if elements2["GateType"] == "NOR":
+                    if (int(elements2["In1Val"]) + int(elements2["In2Val"])) >= 1:
+                        elements2["OutVal"] = 0
 
 
 
 
-print(Ready_Gates)
+
+
+
+
+    Ready_Gates.clear()
+
+
+
+                #if elements2["GateType"] == "INV" or elements2["GateType"] == BUF:
+                #    elements2["OutVal"] =
+
+
+
+for elements in Gates:
+    print(elements)
 
 
 print(Inputs)
