@@ -233,6 +233,8 @@ while Ready_Gates:
                 if elements2["GateType"] == "OR":
                     if (int(elements2["In1Val"]) + int(elements2["In2Val"])) >= 1:
                         elements2["OutVal"] = 1
+
+                    #For input1 = 0; Input2 = 0
                     if int(elements["In1Val"]) == 0:
                         if int(elements["In2Val"]) == 0:
                             templist = list()
@@ -247,9 +249,43 @@ while Ready_Gates:
                                 elements2["In2Faults"].remove(d)
                             templist.clear()
 
+                            for elements3 in elements2["In1Faults"]:
+                                elements2["OutFaults"].append(elements3)
+
+                            for elements4 in elements2["In2Faults"]:
+                                elements2["OutFaults"].append(elements4)
+
+                    #For Input1 = 0; Input2 = 1
                     if int(elements["In1Val"]) == 0:
                         if int(elements["In2Val"]) == 1:
-                            print()
+                            templist = list()
+                            templist2 = list()
+                            tempcount = 0
+                            tempcount2 = 0
+                            for elements3 in elements2["In1Faults"]:
+                                for elements4 in elements2["In2Faults"]:
+                                    if elements4["Node"] == elements3["Node"]:
+                                        if elements4["SA"] == elements3["SA"]:
+                                            templist.append(tempcount)
+                                            templist2.append(tempcount2)
+                                    tempcount = tempcount + 1
+                                Tempcount2 = tempcount2 + 1
+                            for d in templist:
+                                elements2["In2Faults"].remove(d)
+                            for e in templist2:
+                                elements2["In1Faults"].remove(e)
+                            templist.clear()
+                            templist2.clear()
+
+                            for elements3 in elements2["In1Faults"]:
+                                elements2["OutFaults"].append(elements3)
+
+                            for elements4 in elements2["In2Faults"]:
+                                elements2["OutFaults"].append(elements4)
+
+
+
+
                     if int(elements["In1Val"]) == 1:
                         if int(elements["In2Val"]) == 0:
                             print()
