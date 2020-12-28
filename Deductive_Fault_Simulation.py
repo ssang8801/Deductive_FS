@@ -21,6 +21,7 @@ def AssignFaults(a):
             TempFaults["SA"] = 1
             Tempin2list.append(dict(TempFaults))
             a["In2Faults"] = list(Tempin2list)
+    a["OutFaults"] = list()
 
 
 
@@ -96,9 +97,10 @@ for elements in f:
         templist = elements.rstrip().split()
         for elements in templist[1:len(templist)-1]:
             Inputs.append({"Node": elements, "Value": -1})
-
-print(Inputs)
-print(len(Inputs))
+    if elements.startswith("OUTPUT"):
+        templist = elements.rstrip().split()
+        for elements in templist[1:len(templist)-1]:
+            Outputs.append(elements)
 #for elements in Gates:
 #    print(elements)
 
@@ -159,30 +161,31 @@ for elements in Gates:
                 if elements["Exec"] == 0:
                     Ready_Gates.append(elements["Num"])
 
-for elements in Ready_Gates:
-    print(elements)
-
 #Ready Gate Executions
 Flagdetector = list()
 count = 0
+templist = list()
+templist2 = list()
 while Ready_Gates:
     for elements in Ready_Gates:
         for elements2 in Gates:
+            templist.clear()
+            templist2.clear()
             if elements == elements2["Num"]:
                 elements2["Exec"] = 1
-                if elements2["In1Val"] == '0':
+                if int(elements2["In1Val"]) == 0:
                     count = 0
                     for elements3 in elements2["In1Faults"]:
-                        if elements2["In1Node"] == elements3["Node"]:
-                            if elements3["SA"] == 0:
+                        if int(elements2["In1Node"]) == int(elements3["Node"]):
+                            if int(elements3["SA"]) == 0:
                                 Flagdetector.append(count)
                         count = count + 1
 
-                if elements2["In1Val"] == '1':
+                if int(elements2["In1Val"]) == 1:
                     count = 0
                     for elements3 in elements2["In1Faults"]:
-                        if elements2["In1Node"] == elements3["Node"]:
-                            if elements3["SA"] == 1:
+                        if int(elements2["In1Node"]) == int(elements3["Node"]):
+                            if int(elements3["SA"]) == 1:
                                 Flagdetector.append(count)
                         count = count + 1
 
@@ -192,19 +195,19 @@ while Ready_Gates:
 
                 Flagdetector.clear()
 
-                if elements2["In2Val"] == '0':
+                if int(elements2["In2Val"]) == 0:
                     count = 0
                     for elements3 in elements2["In2Faults"]:
-                        if elements2["In2Node"] == elements3["Node"]:
-                            if elements3["SA"] == 0:
+                        if int(elements2["In2Node"]) == int(elements3["Node"]):
+                            if int(elements3["SA"]) == 0:
                                 Flagdetector.append(count)
                         count = count + 1
 
-                if elements2["In2Val"] == '1':
+                if int(elements2["In2Val"]) == 1:
                     count = 0
                     for elements3 in elements2["In2Faults"]:
-                        if elements2["In2Node"] == elements3["Node"]:
-                            if elements3["SA"] == 1:
+                        if int(elements2["In2Node"]) == int(elements3["Node"]):
+                            if int(elements3["SA"]) == 1:
                                 Flagdetector.append(count)
                         count = count + 1
 
@@ -233,20 +236,23 @@ while Ready_Gates:
                 if elements2["GateType"] == "OR":
                     if (int(elements2["In1Val"]) + int(elements2["In2Val"])) >= 1:
                         elements2["OutVal"] = 1
+                    else:
+                        elements2["OutVal"] = 0
 
                     #For input1 = 0; Input2 = 0
-                    if int(elements["In1Val"]) == 0:
-                        if int(elements["In2Val"]) == 0:
-                            templist = list()
+                    if int(elements2["In1Val"]) == 0:
+                        if int(elements2["In2Val"]) == 0:
                             tempcount = 0
                             for elements3 in elements2["In1Faults"]:
+                                tempcount = 0
                                 for elements4 in elements2["In2Faults"]:
                                     if elements4["Node"] == elements3["Node"]:
                                         if elements4["SA"] == elements3["SA"]:
                                             templist.append(tempcount)
                                     tempcount = tempcount + 1
                             for d in templist:
-                                elements2["In2Faults"].remove(d)
+                                del elements2["In2Faults"][d]
+
                             templist.clear()
 
                             for elements3 in elements2["In1Faults"]:
@@ -256,13 +262,11 @@ while Ready_Gates:
                                 elements2["OutFaults"].append(elements4)
 
                     #For Input1 = 0; Input2 = 1
-                    if int(elements["In1Val"]) == 0:
-                        if int(elements["In2Val"]) == 1:
-                            templist = list()
-                            templist2 = list()
-                            tempcount = 0
+                    if int(elements2["In1Val"]) == 0:
+                        if int(elements2["In2Val"]) == 1:
                             tempcount2 = 0
                             for elements3 in elements2["In1Faults"]:
+                                tempcount = 0
                                 for elements4 in elements2["In2Faults"]:
                                     if elements4["Node"] == elements3["Node"]:
                                         if elements4["SA"] == elements3["SA"]:
@@ -271,11 +275,81 @@ while Ready_Gates:
                                     tempcount = tempcount + 1
                                 Tempcount2 = tempcount2 + 1
                             for d in templist:
-                                elements2["In2Faults"].remove(d)
+                                del elements2["In2Faults"][d]
                             for e in templist2:
-                                elements2["In1Faults"].remove(e)
+                                del elements2["In1Faults"][e]
                             templist.clear()
                             templist2.clear()
+
+
+                            for elements4 in elements2["In2Faults"]:
+                                elements2["OutFaults"].append(elements4)
+
+
+
+
+                    if int(elements2["In1Val"]) == 1:
+                        if int(elements2["In2Val"]) == 0:
+                            tempcount2 = 0
+                            for elements3 in elements2["In1Faults"]:
+                                tempcount = 0
+                                for elements4 in elements2["In2Faults"]:
+                                    if elements4["Node"] == elements3["Node"]:
+                                        if elements4["SA"] == elements3["SA"]:
+                                            templist.append(tempcount)
+                                            templist2.append(tempcount2)
+                                    tempcount = tempcount + 1
+                                Tempcount2 = tempcount2 + 1
+                            for d in templist:
+                                del elements2["In2Faults"][d]
+                            for e in templist2:
+                                del elements2["In1Faults"][e]
+                            templist.clear()
+                            templist2.clear()
+
+
+                            for elements4 in elements2["In1Faults"]:
+                                elements2["OutFaults"].append(elements4)
+
+                    if int(elements2["In1Val"]) == 1:
+                        if int(elements2["In2Val"]) == 1:
+                            tempcount = 0
+                            for elements3 in elements2["In1Faults"]:
+                                tempcount = 0
+                                for elements4 in elements2["In2Faults"]:
+                                    if elements3["Node"] == elements4["Node"]:
+                                        if elements3["SA"] == elements4["SA"]:
+                                            templist.append(tempcount)
+                                    tempcount = tempcount + 1
+
+                            for elements3 in elements2["In2Faults"]:
+                                for elements4 in templist:
+                                    elements2["OutFaults"].append(elements3.index(elements4))
+
+                            templist.clear()
+
+
+                if elements2["GateType"] == "NOR":
+                    if (int(elements2["In1Val"]) + int(elements2["In2Val"])) >= 1:
+                        elements2["OutVal"] = 0
+                    else:
+                        elements2["OutVal"] = 1
+
+                    #For input1 = 0; Input2 = 0
+                    if int(elements2["In1Val"]) == 0:
+                        if int(elements2["In2Val"]) == 0:
+                            tempcount = 0
+                            for elements3 in elements2["In1Faults"]:
+                                tempcount = 0
+                                for elements4 in elements2["In2Faults"]:
+                                    if elements4["Node"] == elements3["Node"]:
+                                        if elements4["SA"] == elements3["SA"]:
+                                            templist.append(tempcount)
+                                    tempcount = tempcount + 1
+                            for d in templist:
+                                del elements2["In2Faults"][d]
+
+                            templist.clear()
 
                             for elements3 in elements2["In1Faults"]:
                                 elements2["OutFaults"].append(elements3)
@@ -285,39 +359,316 @@ while Ready_Gates:
 
 
 
+                    #For Input1 = 0; Input2 = 1
+                    if int(elements2["In1Val"]) == 0:
+                        if int(elements2["In2Val"]) == 1:
+                            tempcount2 = 0
+                            for elements3 in elements2["In1Faults"]:
+                                tempcount = 0
+                                for elements4 in elements2["In2Faults"]:
+                                    if elements4["Node"] == elements3["Node"]:
+                                        if elements4["SA"] == elements3["SA"]:
+                                            templist.append(tempcount)
+                                            templist2.append(tempcount2)
+                                    tempcount = tempcount + 1
+                                Tempcount2 = tempcount2 + 1
+                            for d in templist:
+                                del elements2["In2Faults"][d]
+                            for e in templist2:
+                                del elements2["In1Faults"][e]
+                            templist.clear()
+                            templist2.clear()
 
-                    if int(elements["In1Val"]) == 1:
-                        if int(elements["In2Val"]) == 0:
-                            print()
 
-                    if int(elements["In1Val"]) == 1:
-                        if int(elements["In2Val"]) == 1:
-                            print()
+                            for elements4 in elements2["In2Faults"]:
+                                elements2["OutFaults"].append(elements4)
 
 
 
-                if elements2["GateType"] == "NOR":
-                    if (int(elements2["In1Val"]) + int(elements2["In2Val"])) >= 1:
+
+                    if int(elements2["In1Val"]) == 1:
+                        if int(elements2["In2Val"]) == 0:
+                            tempcount2 = 0
+                            for elements3 in elements2["In1Faults"]:
+                                tempcount = 0
+                                for elements4 in elements2["In2Faults"]:
+                                    if elements4["Node"] == elements3["Node"]:
+                                        if elements4["SA"] == elements3["SA"]:
+                                            templist.append(tempcount)
+                                            templist2.append(tempcount2)
+                                    tempcount = tempcount + 1
+                                Tempcount2 = tempcount2 + 1
+                            for d in templist:
+                                del elements2["In2Faults"][d]
+                            for e in templist2:
+                                del elements2["In1Faults"][e]
+                            templist.clear()
+                            templist2.clear()
+
+
+                            for elements4 in elements2["In1Faults"]:
+                                elements2["OutFaults"].append(elements4)
+
+                    if int(elements2["In1Val"]) == 1:
+                        if int(elements2["In2Val"]) == 1:
+                            tempcount = 0
+                            for elements3 in elements2["In1Faults"]:
+                                tempcount = 0
+                                for elements4 in elements2["In2Faults"]:
+                                    if elements3["Node"] == elements4["Node"]:
+                                        if elements3["SA"] == elements4["SA"]:
+                                            templist.append(tempcount)
+                                    tempcount = tempcount + 1
+
+                            for elements3 in elements2["In2Faults"]:
+                                for elements4 in templist:
+                                    elements2["OutFaults"].append(elements3.index(elements4))
+
+                            templist.clear()
+
+                if elements2["GateType"] == "AND":
+                    if int(elements2["In1Val"]) == 1:
+                        if int(elements2["In2Val"]) == 1:
+                            elements2["OutVal"] = 1
+                    else:
                         elements2["OutVal"] = 0
 
+                    if int(elements2["In1Val"]) == 0:
+                        if int(elements2["In2Val"]) == 0:
+                            for elements3 in elements2["In1Faults"]:
+                                tempcount = 0
+                                for elements4 in elements2["In2Faults"]:
+                                    if elements3["Node"] == elements4["Node"]:
+                                        if elements3["SA"] == elements4["SA"]:
+                                            templist.append(tempcount)
+                                    tempcount = tempcount + 1
+
+                            for elements3 in elements2["In2Faults"]:
+                                for elements4 in templist:
+                                    elements2["OutFaults"].append(elements3.index(elements4))
+
+                            templist.clear()
+
+                    if int(elements2["In1Val"]) == 0:
+                        if int(elements2["In2Val"]) == 1:
+                            tempcount2 = 0
+                            for elements3 in elements2["In1Faults"]:
+                                tempcount = 0
+                                for elements4 in elements2["In2Faults"]:
+                                    if elements3["Node"] == elements4["Node"]:
+                                        if elements3["SA"] == elements4["SA"]:
+                                            templist.append(tempcount)
+                                            templist2.append(tempcount2)
+                                    tempcount = tempcount + 1
+                                Tempcount2 = tempcount2 + 1
+
+                            for d in templist:
+                                del elements2["In2Faults"][d]
+                            for e in templist2:
+                                del elements2["In1Faults"][e]
+                            templist.clear()
+                            templist2.clear()
+
+
+                            for elements4 in elements2["In1Faults"]:
+                                elements2["OutFaults"].append(elements4)
+
+                    if int(elements2["In1Val"]) == 1:
+                        if int(elements2["In2Val"]) == 0:
+                            tempcount2 = 0
+                            for elements3 in elements2["In1Faults"]:
+                                tempcount = 0
+                                for elements4 in elements2["In2Faults"]:
+                                    if elements4["Node"] == elements3["Node"]:
+                                        if elements4["SA"] == elements3["SA"]:
+                                            templist.append(tempcount)
+                                            templist2.append(tempcount2)
+                                    tempcount = tempcount + 1
+                                Tempcount2 = tempcount2 + 1
+                            for d in templist:
+                                del elements2["In2Faults"][d]
+                            for e in templist2:
+                                del elements2["In1Faults"][e]
+                            templist.clear()
+                            templist2.clear()
+
+
+                            for elements4 in elements2["In2Faults"]:
+                                elements2["OutFaults"].append(elements4)
 
 
 
+                    if int(elements2["In1Val"]) == 1:
+                        if int(elements2["In2Val"]) == 1:
+                            for elements3 in elements2["In1Faults"]:
+                                tempcount = 0
+                                for elements4 in elements2["In2Faults"]:
+                                    if elements4["Node"] == elements3["Node"]:
+                                        if elements4["SA"] == elements3["SA"]:
+                                            templist.append(tempcount)
+                                    tempcount = tempcount + 1
+                            for d in templist:
+                                del elements2["In2Faults"][d]
+
+                            templist.clear()
+
+                            for elements3 in elements2["In1Faults"]:
+                                elements2["OutFaults"].append(elements3)
+
+                            for elements4 in elements2["In2Faults"]:
+                                elements2["OutFaults"].append(elements4)
+
+                if elements2["GateType"] == "NAND":
+                    if int(elements2["In1Val"]) == 1:
+                        if int(elements2["In2Val"]) == 1:
+                            elements2["OutVal"] = 0
+                    else:
+                        elements2["OutVal"] = 1
+                    if int(elements2["In1Val"]) == 0:
+                        if int(elements2["In2Val"]) == 0:
+                            tempcount = 0
+                            for elements3 in elements2["In1Faults"]:
+                                tempcount = 0
+                                for elements4 in elements2["In2Faults"]:
+                                    if elements3["Node"] == elements4["Node"]:
+                                        if elements3["SA"] == elements4["SA"]:
+                                            templist.append(tempcount)
+                                    tempcount = tempcount + 1
+
+                            for elements3 in elements2["In2Faults"]:
+                                for elements4 in templist:
+                                    elements2["OutFaults"].append(elements3.index(elements4))
+
+                            templist.clear()
+
+                    if int(elements2["In1Val"]) == 0:
+                        if int(elements2["In2Val"]) == 1:
+                            tempcount2 = 0
+                            for elements3 in elements2["In1Faults"]:
+                                tempcount = 0
+                                for elements4 in elements2["In2Faults"]:
+                                    if elements4["Node"] == elements3["Node"]:
+                                        if elements4["SA"] == elements3["SA"]:
+                                            templist.append(tempcount)
+                                            templist2.append(tempcount2)
+                                    tempcount = tempcount + 1
+                                Tempcount2 = tempcount2 + 1
+                            for d in templist:
+                                del elements2["In2Faults"][d]
+                            for e in templist2:
+                                del elements2["In1Faults"][e]
+                            templist.clear()
+                            templist2.clear()
+
+
+                            for elements4 in elements2["In1Faults"]:
+                                elements2["OutFaults"].append(elements4)
+
+                    if int(elements2["In1Val"]) == 1:
+                        if int(elements2["In2Val"]) == 0:
+                            tempcount2 = 0
+                            for elements3 in elements2["In1Faults"]:
+                                tempcount = 0
+                                for elements4 in elements2["In2Faults"]:
+                                    if elements4["Node"] == elements3["Node"]:
+                                        if elements4["SA"] == elements3["SA"]:
+                                            templist.append(tempcount)
+                                            templist2.append(tempcount2)
+                                    tempcount = tempcount + 1
+                                Tempcount2 = tempcount2 + 1
+                            for d in templist:
+                                del elements2["In2Faults"][d]
+                            for e in templist2:
+                                del elements2["In1Faults"][e]
+                            templist.clear()
+                            templist2.clear()
+
+
+                            for elements4 in elements2["In2Faults"]:
+                                elements2["OutFaults"].append(elements4)
 
 
 
+                    if int(elements2["In1Val"]) == 1:
+                        if int(elements2["In2Val"]) == 1:
+                            tempcount = 0
+                            for elements3 in elements2["In1Faults"]:
+                                tempcount = 0
+                                for elements4 in elements2["In2Faults"]:
+                                    if elements4["Node"] == elements3["Node"]:
+                                        if elements4["SA"] == elements3["SA"]:
+                                            templist.append(tempcount)
+                                    tempcount = tempcount + 1
+                            for d in templist:
+                                del elements2["In2Faults"][d]
+
+                            templist.clear()
+
+                            for elements3 in elements2["In1Faults"]:
+                                elements2["OutFaults"].append(elements3)
+
+                            for elements4 in elements2["In2Faults"]:
+                                elements2["OutFaults"].append(elements4)
+
+                for elements3 in Gates:
+                    if elements2["OutNode"] == elements3["In1Node"]:
+                        elements3["In1Val"] = elements2["OutVal"]
+                        for elements4 in elements2["OutFaults"]:
+                            elements3["In1Faults"].append(dict(elements4))
+
+                    if elements2["OutNode"] == elements3["In2Node"]:
+                        elements3["In2Val"] = elements2["OutVal"]
+                        for elements4 in elements2["OutFaults"]:
+                            elements3["In2Faults"].append(dict(elements4))
 
     Ready_Gates.clear()
+    templist.clear()
+    templist2.clear()
 
-
-
-                #if elements2["GateType"] == "INV" or elements2["GateType"] == BUF:
-                #    elements2["OutVal"] =
-
-
-
+    for elements in Gates:
+        if elements["GateType"] == "INV" or elements["GateType"] == "BUF":
+            if int(elements["Exec"]) == 0:
+                if int(elements["In1Val"]) != -1:
+                    Ready_Gates.append(elements["Num"])
+        else:
+            if int(elements["In1Val"]) != -1:
+                if int(elements["In2Val"]) != -1:
+                    if int(elements["Exec"]) == 0:
+                        Ready_Gates.append(elements["Num"])
+lst = list()
+print(Outputs)
 for elements in Gates:
-    print(elements)
+    for elements2 in Outputs:
+        lst.clear()
+        if int(elements["OutNode"]) ==  int(elements2):
+            for d in elements["OutFaults"]:
+                for key, val in d.items():
+                    new = (key,int(val))
+                    lst.append(new)
+            k = len(lst)
+            print("\nFaults Detected at", elements["OutNode"], "are:")
+            i = 0
+            if k == 0:
+                print("None")
+            while k > 0:
+                print("Node", lst[i][1], "Stuck-At", lst[i+1][1])
+                i = i + 1
+                k = k - 2
 
+#print(lst)
+#for g in Gates:
+#    print("Num:", g["Num"])
+#    print("In1Node:", g["In1Node"])
+#    print("In1Val:", g["In1Val"])
+#    print("In1Fault:", g["In1Faults"])
+#    print("In2Node:", g["In2Node"])
+#    print("In2Val:", g["In2Val"])
+#    print("In2Faults", g["In2Faults"])
+#    print("OutVal:", g["OutVal"])
+#    print("OutFault:", g["OutFaults"])
+#    print("Exec", g["Exec"])
+#    print("\n")
 
-print(Inputs)
+#print("Bye")
+#for elements in Gates:
+#    print(elements["OutFaults"])
