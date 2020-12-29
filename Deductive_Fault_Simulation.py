@@ -166,7 +166,15 @@ Flagdetector = list()
 count = 0
 templist = list()
 templist2 = list()
+
 while Ready_Gates:
+#    print(Ready_Gates)
+#    for elements in Ready_Gates:
+#        for elements2 in Gates:
+#            if elements == elements2["Num"]:
+#                print(elements2["GateType"])
+#                print(elements2["In1Val"])
+#                print(elements2["In2Val"], "\n")
     for elements in Ready_Gates:
         for elements2 in Gates:
             templist.clear()
@@ -252,6 +260,8 @@ while Ready_Gates:
                                     tempcount = tempcount + 1
                             for d in templist:
                                 del elements2["In2Faults"][d]
+                                for k in range(len(templist)):
+                                    templist[k] -= 1
 
                             templist.clear()
 
@@ -273,11 +283,15 @@ while Ready_Gates:
                                             templist.append(tempcount)
                                             templist2.append(tempcount2)
                                     tempcount = tempcount + 1
-                                Tempcount2 = tempcount2 + 1
+                                tempcount2 = tempcount2 + 1
                             for d in templist:
                                 del elements2["In2Faults"][d]
+                                for f in range(len(templist)):
+                                    templist[f] -= 1
                             for e in templist2:
                                 del elements2["In1Faults"][e]
+                                for k in range(len(templist2)):
+                                    templist2[k] -= 1
                             templist.clear()
                             templist2.clear()
 
@@ -299,11 +313,15 @@ while Ready_Gates:
                                             templist.append(tempcount)
                                             templist2.append(tempcount2)
                                     tempcount = tempcount + 1
-                                Tempcount2 = tempcount2 + 1
+                                tempcount2 = tempcount2 + 1
                             for d in templist:
                                 del elements2["In2Faults"][d]
+                                for f in range(len(templist)):
+                                    templist[f] -= 1
                             for e in templist2:
                                 del elements2["In1Faults"][e]
+                                for k in range(len(templist2)):
+                                    templist2[k] -= 1
                             templist.clear()
                             templist2.clear()
 
@@ -322,9 +340,9 @@ while Ready_Gates:
                                             templist.append(tempcount)
                                     tempcount = tempcount + 1
 
-                            for elements3 in elements2["In2Faults"]:
-                                for elements4 in templist:
-                                    elements2["OutFaults"].append(elements3.index(elements4))
+
+                            for elements4 in templist:
+                                elements2["OutFaults"].append(elements2["In2Faults"][elements4])
 
                             templist.clear()
 
@@ -348,6 +366,8 @@ while Ready_Gates:
                                     tempcount = tempcount + 1
                             for d in templist:
                                 del elements2["In2Faults"][d]
+                                for k in range(len(templist)):
+                                    templist[k] -= 1
 
                             templist.clear()
 
@@ -371,11 +391,15 @@ while Ready_Gates:
                                             templist.append(tempcount)
                                             templist2.append(tempcount2)
                                     tempcount = tempcount + 1
-                                Tempcount2 = tempcount2 + 1
+                                tempcount2 = tempcount2 + 1
                             for d in templist:
                                 del elements2["In2Faults"][d]
+                                for f in range(len(templist)):
+                                    templist[f] -= 1
                             for e in templist2:
                                 del elements2["In1Faults"][e]
+                                for k in range(len(templist2)):
+                                    templist2[k] -= 1
                             templist.clear()
                             templist2.clear()
 
@@ -391,17 +415,32 @@ while Ready_Gates:
                             tempcount2 = 0
                             for elements3 in elements2["In1Faults"]:
                                 tempcount = 0
+                                print(tempcount2)
                                 for elements4 in elements2["In2Faults"]:
                                     if elements4["Node"] == elements3["Node"]:
                                         if elements4["SA"] == elements3["SA"]:
                                             templist.append(tempcount)
                                             templist2.append(tempcount2)
                                     tempcount = tempcount + 1
-                                Tempcount2 = tempcount2 + 1
+                                tempcount2 = tempcount2 + 1
+
+                            for k in elements2["In1Faults"]:
+                                print(k)
+                            print('\n')
+                            for k in elements2["In2Faults"]:
+                                print(k)
                             for d in templist:
+                            #    print(templist)
+                            #    print(d)
                                 del elements2["In2Faults"][d]
+                                for f in range(len(templist)):
+                                    templist[f] -= 1
                             for e in templist2:
+                                print(templist2)
+                                print(e)
                                 del elements2["In1Faults"][e]
+                                for k in range(len(templist2)):
+                                    templist2[k] -= 1
                             templist.clear()
                             templist2.clear()
 
@@ -420,9 +459,9 @@ while Ready_Gates:
                                             templist.append(tempcount)
                                     tempcount = tempcount + 1
 
-                            for elements3 in elements2["In2Faults"]:
-                                for elements4 in templist:
-                                    elements2["OutFaults"].append(elements3.index(elements4))
+
+                            for elements4 in templist:
+                                elements2["OutFaults"].append(elements2["In2Faults"][elements4])
 
                             templist.clear()
 
@@ -430,6 +469,8 @@ while Ready_Gates:
                     if int(elements2["In1Val"]) == 1:
                         if int(elements2["In2Val"]) == 1:
                             elements2["OutVal"] = 1
+                        else:
+                            elements2["OutVal"] = 0
                     else:
                         elements2["OutVal"] = 0
 
@@ -443,9 +484,8 @@ while Ready_Gates:
                                             templist.append(tempcount)
                                     tempcount = tempcount + 1
 
-                            for elements3 in elements2["In2Faults"]:
-                                for elements4 in templist:
-                                    elements2["OutFaults"].append(elements3.index(elements4))
+                            for elements4 in templist:
+                                elements2["OutFaults"].append(elements2[elements4])
 
                             templist.clear()
 
@@ -460,12 +500,16 @@ while Ready_Gates:
                                             templist.append(tempcount)
                                             templist2.append(tempcount2)
                                     tempcount = tempcount + 1
-                                Tempcount2 = tempcount2 + 1
+                                tempcount2 = tempcount2 + 1
 
                             for d in templist:
                                 del elements2["In2Faults"][d]
+                                for k in range(len(templist)):
+                                    templist[k] -= 1
                             for e in templist2:
                                 del elements2["In1Faults"][e]
+                                for f in range(len(templist2)):
+                                    templist2[f] -= 1
                             templist.clear()
                             templist2.clear()
 
@@ -484,11 +528,15 @@ while Ready_Gates:
                                             templist.append(tempcount)
                                             templist2.append(tempcount2)
                                     tempcount = tempcount + 1
-                                Tempcount2 = tempcount2 + 1
+                                tempcount2 = tempcount2 + 1
                             for d in templist:
                                 del elements2["In2Faults"][d]
+                                for f in range(len(templist)):
+                                    templist[f] -= 1
                             for e in templist2:
                                 del elements2["In1Faults"][e]
+                                for k in range(len(templist2)):
+                                    templist2[k] -= 1
                             templist.clear()
                             templist2.clear()
 
@@ -509,6 +557,8 @@ while Ready_Gates:
                                     tempcount = tempcount + 1
                             for d in templist:
                                 del elements2["In2Faults"][d]
+                                for f in range(len(templist)):
+                                    templist[f] -= 1
 
                             templist.clear()
 
@@ -522,8 +572,11 @@ while Ready_Gates:
                     if int(elements2["In1Val"]) == 1:
                         if int(elements2["In2Val"]) == 1:
                             elements2["OutVal"] = 0
+                        else:
+                            elements2["OutVal"] = 1
                     else:
                         elements2["OutVal"] = 1
+
                     if int(elements2["In1Val"]) == 0:
                         if int(elements2["In2Val"]) == 0:
                             tempcount = 0
@@ -535,9 +588,8 @@ while Ready_Gates:
                                             templist.append(tempcount)
                                     tempcount = tempcount + 1
 
-                            for elements3 in elements2["In2Faults"]:
-                                for elements4 in templist:
-                                    elements2["OutFaults"].append(elements3.index(elements4))
+                            for elements4 in templist:
+                                elements2["OutFaults"].append(elements2[elements4])
 
                             templist.clear()
 
@@ -552,11 +604,15 @@ while Ready_Gates:
                                             templist.append(tempcount)
                                             templist2.append(tempcount2)
                                     tempcount = tempcount + 1
-                                Tempcount2 = tempcount2 + 1
+                                tempcount2 = tempcount2 + 1
                             for d in templist:
                                 del elements2["In2Faults"][d]
+                                for f in range(len(templist)):
+                                    templist[f] -= 1
                             for e in templist2:
                                 del elements2["In1Faults"][e]
+                                for k in range(len(templist2)):
+                                    templist2[k] -= 1
                             templist.clear()
                             templist2.clear()
 
@@ -575,11 +631,15 @@ while Ready_Gates:
                                             templist.append(tempcount)
                                             templist2.append(tempcount2)
                                     tempcount = tempcount + 1
-                                Tempcount2 = tempcount2 + 1
+                                tempcount2 = tempcount2 + 1
                             for d in templist:
                                 del elements2["In2Faults"][d]
+                                for f in range(len(templist)):
+                                    templist[f] -= 1
                             for e in templist2:
                                 del elements2["In1Faults"][e]
+                                for k in range(len(templist2)):
+                                    templist2[k] -= 1
                             templist.clear()
                             templist2.clear()
 
@@ -601,6 +661,8 @@ while Ready_Gates:
                                     tempcount = tempcount + 1
                             for d in templist:
                                 del elements2["In2Faults"][d]
+                                for f in range(len(templist)):
+                                    templist[f] -= 1
 
                             templist.clear()
 
@@ -631,16 +693,18 @@ while Ready_Gates:
                 if int(elements["In1Val"]) != -1:
                     Ready_Gates.append(elements["Num"])
         else:
-            if int(elements["In1Val"]) != -1:
-                if int(elements["In2Val"]) != -1:
-                    if int(elements["Exec"]) == 0:
+            if int(elements["Exec"]) == 0:
+                if int(elements["In1Val"]) != -1:
+                    if int(elements["In2Val"]) != -1:
                         Ready_Gates.append(elements["Num"])
 lst = list()
+
 print(Outputs)
 for elements in Gates:
     for elements2 in Outputs:
         lst.clear()
         if int(elements["OutNode"]) ==  int(elements2):
+            #print(elements["OutFaults"])
             for d in elements["OutFaults"]:
                 for key, val in d.items():
                     new = (key,int(val))
@@ -652,18 +716,21 @@ for elements in Gates:
                 print("None")
             while k > 0:
                 print("Node", lst[i][1], "Stuck-At", lst[i+1][1])
-                i = i + 1
+                i = i + 2
                 k = k - 2
+
 
 #print(lst)
 #for g in Gates:
 #    print("Num:", g["Num"])
+#    print("GateType:", g["GateType"])
 #    print("In1Node:", g["In1Node"])
 #    print("In1Val:", g["In1Val"])
 #    print("In1Fault:", g["In1Faults"])
 #    print("In2Node:", g["In2Node"])
 #    print("In2Val:", g["In2Val"])
 #    print("In2Faults", g["In2Faults"])
+#    print("OutNode:", g["OutNode"])
 #    print("OutVal:", g["OutVal"])
 #    print("OutFault:", g["OutFaults"])
 #    print("Exec", g["Exec"])
